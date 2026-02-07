@@ -71,6 +71,10 @@ def get_menu():
 @app.post("/orders")
 def place_order(customer_name: str, customer_email: str, item_name: str, quantity: int = 1):
     """Place an order for a menu item"""
+    # Validate quantity
+    if quantity < 1:
+        raise HTTPException(status_code=400, detail="Quantity must be at least 1")
+    
     # Validate menu item exists
     if item_name not in menu_items:
         raise HTTPException(status_code=404, detail="Menu item not found")
