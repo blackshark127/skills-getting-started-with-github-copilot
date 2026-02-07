@@ -3,46 +3,54 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mergington High School Activities</title>
+    <title>The Delicious Bite Restaurant</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <header>
-      <h1>Mergington High School</h1>
-      <h2>Extracurricular Activities</h2>
+      <h1>🍕 The Delicious Bite</h1>
+      <h2>Restaurant Menu & Ordering</h2>
     </header>
 
     <main>
-      <section id="activities-container">
-        <h3>Available Activities</h3>
-        <div id="activities-list">
-          <!-- Activities will be loaded here -->
-          <p>Loading activities...</p>
+      <section id="menu-container">
+        <h3>Our Menu</h3>
+        <div id="menu-list">
+          <!-- Menu items will be loaded here -->
+          <p>Loading menu...</p>
         </div>
       </section>
 
-      <section id="signup-container">
-        <h3>Sign Up for an Activity</h3>
-        <form id="signup-form">
+      <section id="order-container">
+        <h3>Place Your Order</h3>
+        <form id="order-form">
           <div class="form-group">
-            <label for="email">Student Email:</label>
-            <input type="email" id="email" required placeholder="your-email@mergington.edu" />
+            <label for="customer-name">Your Name:</label>
+            <input type="text" id="customer-name" required placeholder="John Doe" />
           </div>
           <div class="form-group">
-            <label for="activity">Select Activity:</label>
-            <select id="activity" required>
-              <option value="">-- Select an activity --</option>
-              <!-- Activity options will be loaded here -->
+            <label for="customer-email">Your Email:</label>
+            <input type="email" id="customer-email" required placeholder="your-email@example.com" />
+          </div>
+          <div class="form-group">
+            <label for="menu-item">Select Menu Item:</label>
+            <select id="menu-item" required>
+              <option value="">-- Select a dish --</option>
+              <!-- Menu options will be loaded here -->
             </select>
           </div>
-          <button type="submit">Sign Up</button>
+          <div class="form-group">
+            <label for="quantity">Quantity:</label>
+            <input type="number" id="quantity" min="1" max="10" value="1" required />
+          </div>
+          <button type="submit">Place Order</button>
         </form>
         <div id="message" class="hidden"></div>
       </section>
     </main>
 
     <footer>
-      <p>&copy; 2023 Mergington High School</p>
+      <p>&copy; 2024 The Delicious Bite Restaurant</p>
     </footer>
 
     <script src="app.js"></script>

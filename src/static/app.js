@@ -1,56 +1,61 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const activitiesList = document.getElementById("activities-list");
-  const activitySelect = document.getElementById("activity");
-  const signupForm = document.getElementById("signup-form");
+  const menuList = document.getElementById("menu-list");
+  const menuItemSelect = document.getElementById("menu-item");
+  const orderForm = document.getElementById("order-form");
   const messageDiv = document.getElementById("message");
 
-  // Function to fetch activities from API
-  async function fetchActivities() {
+  // Function to fetch menu items from API
+  async function fetchMenu() {
     try {
-      const response = await fetch("/activities");
-      const activities = await response.json();
+      const response = await fetch("/menu");
+      const menuItems = await response.json();
 
       // Clear loading message
-      activitiesList.innerHTML = "";
+      menuList.innerHTML = "";
 
-      // Populate activities list
-      Object.entries(activities).forEach(([name, details]) => {
-        const activityCard = document.createElement("div");
-        activityCard.className = "activity-card";
+      // Populate menu list
+      Object.entries(menuItems).forEach(([name, details]) => {
+        const menuCard = document.createElement("div");
+        menuCard.className = "menu-card";
 
-        const spotsLeft = details.max_participants - details.participants.length;
-
-        activityCard.innerHTML = `
+        menuCard.innerHTML = `
           <h4>${name}</h4>
           <p>${details.description}</p>
-          <p><strong>Schedule:</strong> ${details.schedule}</p>
-          <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
+          <p><strong>Category:</strong> ${details.category}</p>
+          <p class="price"><strong>Price:</strong> $${details.price.toFixed(2)}</p>
+          <p class="${details.available ? 'available' : 'unavailable'}">
+            ${details.available ? '✓ Available' : '✗ Unavailable'}
+          </p>
         `;
 
-        activitiesList.appendChild(activityCard);
+        menuList.appendChild(menuCard);
 
-        // Add option to select dropdown
-        const option = document.createElement("option");
-        option.value = name;
-        option.textContent = name;
-        activitySelect.appendChild(option);
+        // Add option to select dropdown if available
+        if (details.available) {
+          const option = document.createElement("option");
+          option.value = name;
+          option.textContent = `${name} - $${details.price.toFixed(2)}`;
+          menuItemSelect.appendChild(option);
+        }
       });
     } catch (error) {
-      activitiesList.innerHTML = "<p>Failed to load activities. Please try again later.</p>";
-      console.error("Error fetching activities:", error);
+      menuList.innerHTML = "<p>Failed to load menu. Please try again later.</p>";
+      console.error("Error fetching menu:", error);
     }
   }
 
   // Handle form submission
-  signupForm.addEventListener("submit", async (event) => {
+  orderForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    const email = document.getElementById("email").value;
-    const activity = document.getElementById("activity").value;
+    const customerName = document.getElementById("customer-name").value;
+    const customerEmail = document.getElementById("customer-email").value;
+    const itemName = document.getElementById("menu-item").value;
+    const quantity = document.getElementById("quantity").value;
 
     try {
       const response = await fetch(
-        `/activities/${encodeURIComponent(activity)}/signup?email=${encodeURIComponent(email)}`,
+        `/orders?customer_name=${encodeURIComponent(customerName)}&customer_email=${encodeURIComponent(customerEmail)}&item_name=${encodeURIComponent(itemName)}&quantity=${quantity}`,
         {
           method: "POST",
         }
@@ -59,9 +64,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const result = await response.json();
 
       if (response.ok) {
-        messageDiv.textContent = result.message;
+        messageDiv.textContent = `${result.message} - Total: $${result.order.total_price.toFixed(2)}`;
         messageDiv.className = "success";
-        signupForm.reset();
+        orderForm.reset();
+        document.getElementById("quantity").value = 1; // Reset quantity to 1
       } else {
         messageDiv.textContent = result.detail || "An error occurred";
         messageDiv.className = "error";
@@ -74,13 +80,13 @@ document.addEventListener("DOMContentLoaded", () => {
         messageDiv.classList.add("hidden");
       }, 5000);
     } catch (error) {
-      messageDiv.textContent = "Failed to sign up. Please try again.";
+      messageDiv.textContent = "Failed to place order. Please try again.";
       messageDiv.className = "error";
       messageDiv.classList.remove("hidden");
-      console.error("Error signing up:", error);
+      console.error("Error placing order:", error);
     }
   });
 
   // Initialize app
-  fetchActivities();
+  fetchMenu();
 });
